@@ -2,7 +2,9 @@ package com.imobile3.groovypayments.ui.login;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -26,6 +28,8 @@ import androidx.lifecycle.ViewModelProviders;
 public class LoginActivity extends BaseActivity {
 
     private LoginViewModel loginViewModel;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,9 @@ public class LoginActivity extends BaseActivity {
         final Button loginButton = findViewById(R.id.btn_login);
         final Button btnSkipLogin = findViewById(R.id.btn_skip_login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -108,6 +115,9 @@ public class LoginActivity extends BaseActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+
+                editor.putString("username",usernameEditText.getText().toString());
+                editor.apply();
             }
         });
 
